@@ -1,2 +1,2 @@
-# boprs
-A Blockchain-Based Open Peer Review System Using Hyperledger Fabric
+# A Blockchain-Based Open Peer Review System Using Hyperledger Fabric
+
