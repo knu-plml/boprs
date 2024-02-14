@@ -1,2 +1,2 @@
-# A Blockchain-Based Open Peer Review System Using Hyperledger Fabric
+# A Template for Blockchain-Based Open Peer Review Systems Using Hyperledger Fabric
 
