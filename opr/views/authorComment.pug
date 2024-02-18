@@ -1,0 +1,154 @@
+extends userLayout.pug
+
+block title
+  title Comment
+
+block content
+  
+  .container
+    table
+      tr
+        td
+          h2=title
+      tr
+        td(style='vertical-align: bottom')
+          p(style='font-size:16px')
+            |(
+            =data.Round
+            |&nbsp;round,&nbsp;
+            =data.Status
+            |)
+
+    br
+    h4 Reviewers comments
+    br
+
+    nav.navbar.navbar-default
+      .container
+        ul.nav.navbar-nav
+          li#comment
+            form(name='comment' action=data.Round method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+              input(type='hidden' name='pComment' value=pComment)
+            a(href='javascript:document.comment.submit()') Comment
+          li#history
+            form(name='history' action='history' method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.history.submit()') Paper log
+          if data.Status=='revise'
+          li#update
+            form(name='update' action='update' method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.update.submit()') Submit revision
+          if data.Status=='rejected' || data.Status=='accepted'
+            li#rating
+              form(name='rating' action='rating' method='post')
+                input(type='hidden' name='data' value=data)
+                input(type='hidden' name='user' value=user)
+              a(href='javascript:document.rating.submit()') Reviewers rating
+
+    hr(style='border: none; height: 2px; background-color: black;')
+    if data.Round != 0
+      h4 Review round
+      nav.navbar.navbar-default
+        .container
+          ul.nav.navbar-nav
+            - var n = 0
+            while n <= data.Round
+              li(id=n)
+                form(name='paper' + n action=n method='post')
+                  input(name='user' type='hidden' value=user)
+                  input(name='data' type='hidden' value=data)
+                a(href='javascript:document.paper' + n + '.submit()')=n++
+    if cRound != 0                
+      h3 Round&nbsp;
+        =cRound
+      hr
+      hr
+      table
+        tr#mat
+          th#mat Due date
+          th#mat Complete date
+        tr#mat
+          td#mat=cont.DueDate
+          - var splitCompleteDate = String(cont.CompleteDate).split(' ');
+          td#mat=splitCompleteDate[0]
+  
+      if !rComment[0]
+        br
+        h4 There are no reviewer's comments.
+      else
+        each reviewer, index in rComment
+          hr
+          hr
+          if reviewer.ReviewerID
+            h3=reviewer.ReviewerID
+          else
+            h3=reviewer.Key
+          br
+          - for (var i=0; i<reviewer.Comment.length; i++)
+            p Location(Line) :&nbsp;
+              =reviewer.Location[i]
+            p Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
+              =reviewer.Comment[i]
+  
+      hr
+      hr
+      if !cComment
+        br
+        h4 There are no editor's reports.
+      else
+        if cComment.ReviewerID
+          h3=cComment.ReviewerID
+        else
+          h3 editor
+        br
+        - for (var i=0; i<cComment.Comment.length; i++)
+          p Location(Line) :&nbsp;
+            =cComment.Location[i]
+          p Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
+            =cComment.Comment[i]
+  
+      hr
+      p Decision:&nbsp;
+        b(style='font-size:large')=decision
+      hr(style='border: none; height: 2px; background-color: black;')
+      h3 Comment with reviewers
+      if pComment
+        table
+          tr
+            th User
+            th Comment
+               | &nbsp; &nbsp;
+            th Time
+          - for (var i=0; i<pComment.length; i++)
+            tr
+              td
+                - var splitDate = String(pComment[i].Date).split(' ');
+                - var splitDate2 = String(splitDate[0]).split('-');
+                =splitDate2[1]
+                |-
+                =splitDate2[2]
+                | &nbsp;
+                =splitDate[1]
+                | &nbsp; &nbsp;
+              td
+                if pComment[i].ReviewerID
+                  =pComment[i].ReviewerID
+                else
+                  =pComment[i].ReviewerKey
+                | &nbsp; &nbsp;
+              td
+                =pComment[i].Message
+                | &nbsp; &nbsp;
+      hr(style='border: none; height: 1px; background-color: black;')
+      form(action=data.Round + '/comment' method='post')
+        input(name='user' type='hidden' value=user)
+        input(name='data' type='hidden' value=data)
+        textarea(name='comment' cols='50' rows='4')
+        br
+        input(name='submit' type='submit' value='submit')
+      br

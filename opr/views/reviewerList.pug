@@ -1,0 +1,73 @@
+extends userLayout.pug
+
+block title
+  title Reviews
+
+block content
+  .container
+    h3
+      b [Reviewer] Reviews
+    br
+    table.table.table-striped
+      thead
+        tr
+          - var items = ["Title", "Author ID", "Paper Status", "Reviewer Status"]
+          each item in items
+            th= item
+      tbody
+        each paper, idx in data
+          tr
+            td
+              form(name=paper.Organization + paper.PaperID action='/reviewer/' + paper.Title + '/contract' method='post')
+                input(type='hidden' name='user' value=user)
+                input(type='hidden' name='ckey' value=paper.ContractKey)
+                a(href='javascript:document.' + paper.Organization + paper.PaperID + '.submit()')= paper.Title
+            td= paper.AuthorID
+            td= paper.Status
+            td= paper.Reviewer
+
+    br 
+    br
+
+    .container
+      ul.pager
+        - var curSet = pasing.curSet
+        - var endPage = pasing.endPage
+        - var startPage = pasing.startPage
+        - var totalSet = pasing.totalSet
+        - var totalPage = pasing.totalPage
+        - var page_list_size = pasing.page_list_size
+        - var page_size = pasing.page_size
+        - var curPage = pasing.curPage
+        
+        if curSet > 1
+          - var value = startPage - 1
+          li.previous(value=value)
+            form(name='prev' action=value method='post')
+              input(type='hidden' name='user' value=user)
+              //input(type='hidden' name='email' value=email)
+            a(href='#' onclick='javascript:document.prev.submit();') Prev
+
+        - for (var i = startPage; i <= endPage; i++)
+          if i > totalPage
+            - break
+
+          form(style='display:inline' name='curr' + i action=i method='post')
+            input(type='hidden' name='user' value=user)
+            //input(type='hidden' name='email' value=email)
+          if i == curPage
+            li(value=i)
+              a(href='#' onclick='javascript:document.curr' + i + '.submit();')
+                = i
+          else
+            li.active(value=i)
+              a(href='#' onclick='javascript:document.curr' + i + '.submit();')
+                = i
+
+        if curSet < totalSet
+          - var value = endPage + 1
+          li.next(value=value) 
+            form(name='next' action=value method='post')
+              input(type='hidden' name='user' value=user)
+              //input(type='hidden' name='email' value=email)
+            a(href='#' onclick='javascript:document.next.submit();') Next

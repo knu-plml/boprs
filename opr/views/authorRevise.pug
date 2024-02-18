@@ -1,0 +1,24 @@
+extends userLayout.pug
+
+block title
+  title Submit paper
+  style(type='text/css').
+    td {padding: 5px}
+
+block content
+  .container
+    h2 Revision paper
+    h3=title
+    br
+    form(action='/upload_revision' method='post' enctype='multipart/form-data')
+      table
+        input(name='user' type='hidden' value=user)
+        input(name='data' type='hidden' value=data)
+      br
+      p Paper file
+      .form-group
+        input.form-control-file#fileupload(type='file' name='paper' value="select")
+      p Revision note
+      .form-group
+        input.form-control-file#fileupload(type='file' name='note' value="select")
+      input(type='submit' value='Submit')

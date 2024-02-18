@@ -1,0 +1,56 @@
+extends editorLayout.pug
+
+block title
+  title Upload paper
+  style(type='text/css').
+    td {padding: 5px}
+
+block content
+  .container
+    h2 Upload paper
+    br
+    form(action='/upload_paper' method='post' enctype='multipart/form-data')
+      table
+        tr
+          td.mid Title
+          td
+            p(style='display:inline;') :
+          td
+            input(name='ptitle' type='text')
+        tr
+          td.mid Author
+          td
+            p(style='display:inline;') :
+          td
+            input(name='author' type='text')
+        tr
+          td.mid E-mail
+          td
+            p(style='display:inline;') :
+          td
+            input(name='email' type='text')
+        tr
+          td.mid Organization
+          td
+            p(style='display:inline;') :
+          td
+            input(name='org' type='text')
+        tr
+          td.mid Paper ID 
+          td
+            p(style='display:inline;') :
+          td
+            input(name='pid' type='text')
+        tr
+          td.mid Abstract
+          td
+            p(style='display:inline;') :
+          td
+            textarea(cols='23' rows='8' name='pabt')
+      input(type='hidden' name='user' value=user)
+      br
+      .form-group
+        input.form-control-file#fileupload(type='file' name='paper' value="select")
+      input(type='submit' value='Submit')
+
+

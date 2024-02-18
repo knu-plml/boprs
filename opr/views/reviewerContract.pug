@@ -1,0 +1,90 @@
+extends userLayout.pug
+
+block title 
+  title Contract Situation
+    
+   
+block content
+  .container
+    table
+      tr
+        td
+          h2=title
+      tr
+        td(style='vertical-align: bottom')
+          p(style='font-size:16px')
+            |(
+            =data.Round
+            |&nbsp;round) 
+    h4 Contract Situation
+    br
+    nav.navbar.navbar-default
+      .container
+        ul.nav.navbar-nav
+          li#contract
+            form(name='contract' action='contract' method='post')
+              input(type='hidden' name='user' value=user)
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='pComment' value=pComment)
+            a(href='javascript:document.contract.submit()') Contract
+          li#audit
+            form(name='audit' action='audit' method='post')
+              input(type='hidden' name='user' value=user)
+              input(type='hidden' name='data' value=data)
+            a(href='javascript:document.audit.submit()') Review
+
+    table
+      tr#mat
+        th#mat Due date
+        th#mat Complete date
+      tr#mat
+        td#mat=data.DueDate
+        - var splitCompleteDate = String(data.CompleteDate).split(' ');
+        td#mat=splitCompleteDate[0]
+
+    br
+    -var url = 'apply/'
+    form(method='post' action=url)
+      input(type='hidden' name='user' value=user)
+      input(type='hidden' name='data' value=data)
+      input(type='submit' value='Accept' name='reviewer')
+      | &nbsp; &nbsp; &nbsp;
+      input(type='submit' value='Reject' name='reviewer')
+
+    hr(style='border: none; height: 2px; background-color: black;')
+    h3 Comment with author and reviewers
+    if pComment
+      table
+        tr
+          th User
+          th Comment
+             | &nbsp; &nbsp;
+          th Time
+        - for (var i=0; i<pComment.length; i++)
+          tr
+            td
+              - var splitDate = String(pComment[i].Date).split(' ');
+              - var splitDate2 = String(splitDate[0]).split('-');
+              =splitDate2[1] 
+              |-
+              =splitDate2[2] 
+              | &nbsp;
+              =splitDate[1]
+              | &nbsp; &nbsp;
+            td
+              if pComment[i].ReviewerID
+                =pComment[i].ReviewerID
+              else
+                =pComment[i].ReviewerKey
+              | &nbsp; &nbsp;
+            td
+              =pComment[i].Message
+              | &nbsp; &nbsp;
+    hr(style='border: none; height: 1px; background-color: black;')
+    form(action=data.Round + '/comment' method='post')
+      input(name='user' type='hidden' value=user)
+      input(name='data' type='hidden' value=data)
+      textarea(name='comment' cols='50' rows='4')
+      br
+      input(name='submit' type='submit' value='submit')
+    br

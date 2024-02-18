@@ -1,0 +1,62 @@
+extends userLayout.pug
+
+block title
+  title Paper log
+
+block content
+  .container
+    table
+      tr
+        td
+          h2=title
+      tr
+        td(style='vertical-align: bottom')
+          p(style='font-size:16px')
+            |(
+            =data.Round
+            |&nbsp;round,&nbsp;
+            =data.Status
+            |)
+
+    br
+    h4 Paper log
+    br
+
+    nav.navbar.navbar-default
+      .container
+        ul.nav.navbar-nav
+          li#comment
+            form(name='comment' action='../' + title + '/' + data.Round method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.comment.submit()') Comment
+          li#history
+            form(name='history' action='history' method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.history.submit()') Paper log
+          if data.Status=='revise'
+            li#update
+              form(name='update' action='update' method='post')
+                input(type='hidden' name='data' value=data)
+                input(type='hidden' name='user' value=user)
+              a(href='javascript:document.update.submit()') Submit revision
+          if data.Status=='rejected' || data.Status=='accepted'
+            li#rating
+              form(name='rating' action='rating' method='post')
+                input(type='hidden' name='data' value=data)
+                input(type='hidden' name='user' value=user)
+              a(href='javascript:document.rating.submit()') Reviewers rating
+
+    table.table.table-striped
+      thead
+        tr
+          - var items = ["Submitted time", "Status"]
+          each item in items
+            th=item
+      tbody
+        each paper, idx in hist
+          tr
+            - var splitTimestamp = String(paper.Timestamp).split('+');
+            td= splitTimestamp[0]
+            td= paper.Paper.Status

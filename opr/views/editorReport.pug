@@ -1,0 +1,167 @@
+extends editorLayout.pug
+
+block title 
+  title Audit paper
+  script.
+    function addTextBox(){ var div = document.createElement('div'); div.innerHTML = document.getElementById('t_box').innerHTML; document.getElementById('field').appendChild(div); }
+    function deleteTextBox(obj){ document.getElementById('field').removeChild(obj.parentNode.parentNode.parentNode.parentNode.parentNode) }
+
+block content
+  .container
+    table
+      tr
+        td
+          h2=title
+      tr
+        td(style='vertical-align: bottom')
+          p(style='font-size:16px')
+            |(
+            =data.Round
+            |&nbsp;round,&nbsp;
+            =data.Status
+            |)
+    br
+    h4 Write report
+    table
+      tr
+        form(name='download' action='/download' method='post')
+          input(type='hidden' name='paperKey' value=data.Key)
+          input(type='hidden' name='title' value=title)
+          input(type='hidden' name='round' value=data.Round)
+          input(type='hidden' name='user' value=user)
+        a(href='javascript:document.download.submit()') File
+      tr
+        p
+      tr
+        form(name='download_rev' action='/download_revision' method='post')
+          input(type='hidden' name='paperKey' value=data.Key)
+          input(type='hidden' name='title' value=title)
+          input(type='hidden' name='round' value=data.Round)
+          input(type='hidden' name='user' value=user)
+        a(href='javascript:document.download_rev.submit()') Revision note
+    br
+    nav.navbar.navbar-default
+      .container
+        ul.nav.navbar-nav
+          li#manage
+            form(name='manage' action='../../' + title method='post')
+              input(type='hidden' name='user' value=user)
+              input(type='hidden' name='data' value=data)
+            a(href='javascript:document.manage.submit()') Paper management
+          li#report
+            form(name='report' action='../report/' + data.Round method='post')
+              input(type='hidden' name='user' value=user)
+              input(type='hidden' name='data' value=data)
+            a(href='javascript:document.report.submit()') Write report
+          li#history
+            form(name='history' action='../history' method='post')
+              input(type='hidden' name='user' value=user)
+              input(type='hidden' name='data' value=data)
+            a(href='javascript:document.history.submit()') Paper log
+          if data.Status=='revise'
+            li#update
+              form(name='update' action='../update' method='post')
+                input(type='hidden' name='user' value=user)
+                input(type='hidden' name='data' value=data)
+              a(href='javascript:document.update.submit()') Submit revision
+          if data.Status=='rejected' || data.Status=='accepted'
+            li#rating
+              form(name='rating' action='../rating' method='post')
+                input(type='hidden' name='data' value=data)
+                input(type='hidden' name='user' value=user)
+              a(href='javascript:document.rating.submit()') Reviewers rating              
+
+    hr(style='border: none; height: 2px; background-color: black;')
+    if data.Round != 0
+      h4 Review round
+      nav.navbar.navbar-default
+        .container
+          ul.nav.navbar-nav
+            - var n = 0
+            while n <= data.Round
+              li(id=n)
+                form(name='paper' + n action=n method='post')
+                  input(name='user' type='hidden' value=user)
+                  input(name='data' type='hidden' value=data)
+                a(href='javascript:document.paper' + n + '.submit()')=n++
+    if cRound != 0
+      h3 Round&nbsp;
+        =cRound
+      hr
+      hr
+      table(cellspacing=25)
+        tr
+          th#mat Due date
+          th#mat Complete date
+        tr
+          td#mat=cont.DueDate
+          - var splitCompleteDate = String(cont.CompleteDate).split(':');
+          td#mat=splitCompleteDate[0]
+
+      if !rComment[0]
+        br
+        h4 There are no reviewer's comments.
+      else
+        each reviewer, index in rComment
+          hr
+          hr
+          h3=reviewer.ReviewerID
+          br
+          -for (var i=0; i<reviewer.Comment.length; i++)
+            p Location(Line) :&nbsp;
+              =reviewer.Location[i]
+            p Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
+              =reviewer.Comment[i]
+  
+      hr
+      hr
+      if cRound == data.Round && !(data.Status == 'accepted' || data.Status == 'rejected')
+        h4 
+          b Write reports
+        p Location(Line)&nbsp; &nbsp; &nbsp; &nbsp;Comment
+        form(method='post' action='../send')
+          div(id='t_box' style='display:none;')
+            table
+              tr
+                td
+                  input(type='text' name='loc' value='' size='6px')
+                  | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                td
+                  textarea(name='comment' cols='50' rows='4')
+                  | &nbsp;&nbsp;
+                td
+                  input(type='button' value=' Delete ' onclick='deleteTextBox(this)')
+            p
+          div(id='field')
+          br
+          select(name='decision')
+            option(value='accepted') accept
+            option(value='revise') revise
+            option(value='rejected') reject
+          | &nbsp;&nbsp;&nbsp;
+          input(type='button' value=' Add ' onclick='addTextBox()')
+          | &nbsp;&nbsp;&nbsp;
+          input(type='hidden' name='data' value=data)
+          input(type='hidden' name='user' value=user)
+          input(type='submit' value=' Submit ')
+          br
+          br
+      else
+        if !cComment
+          br
+          h4 There are no editor's reports.
+        else
+          h3=cComment.ReviewerID
+          br
+          - for (var i=0; i<cComment.Comment.length; i++)
+            p Location(Line) :&nbsp;
+              =cComment.Location[i]
+            p Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
+              =cComment.Comment[i]
+  
+        hr
+        p Decision:&nbsp;
+          b(style='font-size:large')=decision
+      br
+    
+    

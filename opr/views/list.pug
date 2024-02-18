@@ -1,0 +1,79 @@
+extends layout.pug
+
+block title
+  title Paper list
+
+block content
+  .container
+    h3
+      b Paper list
+    br
+    form(action='/login/search/1' method='post')
+      input(type='text' name='pName' style='width:500px')
+      | &nbsp; &nbsp;
+      input(type='hidden' name='user' value=user)
+      input(type='submit' value='Search')
+    br
+    table.table.table-striped
+      thead
+        tr
+          - var items = ["Title", "Author ID", "Status"]
+          each item in items
+            th= item
+      tbody
+        each paper, idx in data
+          tr
+            td
+              form(name=paper.Organization + paper.PaperID + 'd' action='/paper/' + paper.Title + '/' + paper.Round method='post')
+                input(type='hidden' name='user' value=user)
+                input(type='hidden' name='data' value=paper)
+                a(href='javascript:document.' + paper.Organization + paper.PaperID + 'd.submit()')= paper.Title
+            td
+              =paper.AuthorID
+            td
+              =paper.Status
+    br 
+    br
+
+    .container
+      ul.pager
+        - var curSet = pasing.curSet
+        - var endPage = pasing.endPage
+        - var startPage = pasing.startPage
+        - var totalSet = pasing.totalSet
+        - var totalPage = pasing.totalPage
+        - var page_list_size = pasing.page_list_size
+        - var page_size = pasing.page_size
+        - var curPage = pasing.curPage
+
+        if curSet > 1
+          - var value = startPage - 1
+          li.previous(value=value)
+            form(name='prev' action=value method='post')
+              input(type='hidden' name='user' value=user)
+            //- var href = '/login/' + (startPage-1)
+            a(href='#' onclock='javascript:document.prev.submin();') Prev
+
+        - for (var i = startPage; i <= endPage; i++)
+          if i > totalPage
+            - break
+
+          //- var href = '/login/' + i
+          form(style='display:inline' name='curr' + i action=i method='post')
+            input(type='hidden' name='user' value=user)
+          if i == curPage
+            li(value=i)
+              a(href='#' onclick='javascript:document.curr' + i + '.submit();')
+                = i
+          else
+            li.active(value=i)
+              a(href='#' onclick='javascript:document.curr' + i + '.submit();')
+                = i
+
+        if curSet < totalSet
+          - var value = endPage + 1
+          li.next(value=value) 
+            form(name='next' action=value method='post')
+              input(type='hidden' name='user' value=user)
+            //- var href = '/login/' + endPage + 1
+            a(href='#' onclick='javascript:document.next.submit();') Next

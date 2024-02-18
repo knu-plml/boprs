@@ -1,0 +1,130 @@
+extends editorLayout.pug
+
+block title
+  title Preview paper
+
+block content
+  .container
+    table
+      tr
+        td
+          h2 
+            =title
+      tr
+        td(style='padding-bottom:10px')
+          form(name='download' action='/download' method='post')
+            input(type='hidden' name='paperKey' value=data.Key)
+            input(type='hidden' name='title' value=title)
+            input(type='hidden' name='round' value=data.Round)
+            input(type='hidden' name='user' value=user)
+            a(href='javascript:document.download.submit()') File
+
+      tr
+        td
+          if data.Status=='recruit_reviewer'
+            form(name='a' action='../../apply_reviewer/' + title method='post')
+              input(type='hidden' name='user' value=user)
+              input(type='hidden' name='paperKey' value=data.Key)
+              a(href='javascript:document.a.submit()') Apply reviewer
+          else
+            p You can't apply for reviewer.
+            p Current status: 
+              b(style='font-size: large')=data.Status
+    hr(style='border: none; height: 2px; background-color: black;')
+    table
+      tr
+        td(style='white-space: nowrap') 
+          b Abstract :
+        td(style='padding: 5px')
+          =data.Abstract
+
+    hr(style='border: none; height: 2px; background-color: black;')
+    if data.Round != 0
+      h4 Review round          
+      nav.navbar.navbar-default
+        .container
+          ul.nav.navbar-nav
+            - var n = 0
+            while n <= data.Round 
+              li(id=n)
+                form(name='paper' + n action=n method='post')
+                  input(name='user' type='hidden' value=user)
+                  input(name='data' type='hidden' value=data)
+                a(href='javascript:document.paper' + n + '.submit()')=n++
+    if cRound != 0
+      h3 Round&nbsp;
+        =cRound
+      if !rComment[0]
+        h4 There are no reviewer's comments.
+      else
+        each reviewer, index in rComment
+          hr
+          hr
+          if reviewer.ReviewerID
+            h3=reviewer.ReviewerID
+          else
+            h3=reviewer.Key
+          br
+          - for (var i=0; i<reviewer.Comment.length; i++)
+            p Location(Line) :&nbsp;
+              =reviewer.Location[i]
+            p Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
+              =reviewer.Comment[i]
+  
+      hr
+      hr
+      if !cComment
+        br
+        h4 There are no editor's reports.
+      else
+        if cComment.ReviewerID
+          h3=cComment.ReviewerID
+        else
+          h3 editor
+        br
+        - for (var i=0; i<cComment.Comment.length; i++)
+          p Location(Line) :&nbsp;
+            =cComment.Location[i]
+          p Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
+            =cComment.Comment[i]
+  
+      hr
+      p Decision:&nbsp;
+        b(style='font-size:large')=decision
+      hr(style='border: none; height: 2px; background-color: black;')
+      h3 Comment with author and reviewers
+      if pComment
+        table
+          tr
+            th User
+            th Comment
+               | &nbsp; &nbsp;
+            th Time
+          - for (var i=0; i<pComment.length; i++)
+            tr
+              td
+                - var splitDate = String(pComment[i].Date).split(' ');
+                - var splitDate2 = String(splitDate[0]).split('-');
+                =splitDate2[1]
+                |-
+                =splitDate2[2]
+                | &nbsp;
+                =splitDate[1]
+                | &nbsp; &nbsp;
+              td
+                if pComment[i].ReviewerID
+                  =pComment[i].ReviewerID
+                else
+                  =pComment[i].ReviewerKey
+                | &nbsp; &nbsp;
+              td
+                =pComment[i].Message
+                | &nbsp; &nbsp;
+      hr(style='border: none; height: 1px; background-color: black;')
+      form(action=cRound + '/comment' method='post')
+        input(name='user' type='hidden' value=user)
+        input(name='data' type='hidden' value=data)
+        textarea(name='comment' cols='50' rows='4')
+        br
+        input(name='submit' type='submit' value='submit')
+      br

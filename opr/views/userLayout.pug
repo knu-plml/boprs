@@ -1,0 +1,90 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css')
+    style(type="text/css").
+      a, #atag {color: blue;}
+      a:hover, #atag:hover {text-decoration: none; color:#333;}
+      #mat {border: 1px solid; padding: 10px; text-align: center;}
+
+    block title
+
+  body
+    nav.navbar.navbar-default
+      .container
+        ul.nav.navbar-nav
+          li#list
+            form(name='login' action='/login/1 ' method='post')
+              input(name='user' type='hidden' value=user)
+            a(href='javascript:document.login.submit()') List
+          li#author
+            form(name='author' action='/author_list/1' method='post')
+              input(name='user' type='hidden' value=user)
+            a(href='javascript:document.author.submit()') Author
+          li#reviewer
+            form(name='reviewer' action='/reviewer_list/1' method='post')
+              input(name='user' type='hidden' value=user)
+            a(href='javascript:document.reviewer.submit()') Reviewer
+          li#accept
+            form(name='eic' action='/eicAM' method='post')
+              input(name='user' type='hidden' value=user)
+            a(href='javascript:document.eic.submit()') Acceptance model
+   
+    .container
+      if user
+        table
+          tr
+            td
+              h4 Welcome,&nbsp;
+                =user
+                |! &nbsp;
+            td
+              button(type='button' onclick="location.href='/logout'") Log out
+ 
+    block content
+ 
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js')
+    script.
+      $(document).ready(function(){
+        var title = document.title;
+        if (title == "Paper list")
+          $('.nav li#list').addClass('active');
+        else if (title == "Preview paper"){
+          $('.nav li#list').addClass('active');
+          var urls=document.URL.split('/')
+          $('.nav li#' + urls[urls.length-1]).addClass('active')
+        }
+        else if (title == "Upload paper")
+          $('.nav li#author').addClass('active');
+        else if (title == "Submitted Manuscripts")
+          $('.nav li#author').addClass('active');
+        else if (title == "Reviews")
+          $('.nav li#reviewer').addClass('active');
+        else if (title == "Acceptance Model")
+          $('.nav li#accept').addClass('active');
+        else if (title == "Contract Situation"){
+          $('.nav li#reviewer').addClass('active');
+          $('.nav li#contract').addClass('active');
+        }
+        else if (title == "Audit paper"){
+          $('.nav li#reviewer').addClass('active');
+          $('.nav li#audit').addClass('active');
+        }
+        else if (title == "Comment"){
+          $('.nav li#author').addClass('active');
+          $('.nav li#comment').addClass('active');
+          var urls=document.URL.split('/')
+          $('.nav li#' + urls[urls.length-1]).addClass('active')
+        }
+        else if (title == "Paper log"){
+          $('.nav li#author').addClass('active');
+          $('.nav li#history').addClass('active');
+        }
+        else if (title == "Reviewers rating"){
+          $('.nav li#author').addClass('active');
+          $('.nav li#rating').addClass('active');
+        }
+      });

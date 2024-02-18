@@ -1,0 +1,27 @@
+extends layout.pug
+
+block title
+  title Sign up
+
+block content
+  .container
+    h2 Sign up
+    br
+
+    form(action='/registerUser' method='post')
+      table
+        tr
+          td E-mail
+          td(style='padding-top: 10px')
+            p :&nbsp;
+              input(name='email' type='text')
+        tr
+          td ORCID
+          td(style='padding-top: 10px')
+            p :&nbsp;
+              if orcid
+                input(name='orcid' type='text' value=orcid readonly)
+              else
+                input(name='orcid' type='text')
+      br
+      input(type='submit' value='Sign up')

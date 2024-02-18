@@ -1,0 +1,65 @@
+extends userLayout.pug
+
+block title
+  title Reviewers rating
+
+block content
+  .container
+    table
+      tr
+        td
+          h2=title
+      tr
+        td(style='vertical-align: bottom')
+          p(style='font-size:16px')
+            |(
+            =data.Round
+            |&nbsp;round,&nbsp;
+            =data.Status
+            |)
+
+    br
+    h4 Reviewers rating
+    br
+
+    nav.navbar.navbar-default
+      .container
+        ul.nav.navbar-nav
+          li#comment
+            form(name='comment' action='../' + title + '/' + data.Round method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.comment.submit()') Comment
+          li#history
+            form(name='history' action='history' method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.history.submit()') Paper log
+          li#rating
+            form(name='rating' action='rating' method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.rating.submit()') Reviewers rating
+
+    form(action='/rating/1' method='post')
+      input(type='hidden' name='user' value=user)
+      input(type='hidden' name='data' value=data)
+      table
+        each reviewer, idx in reviewers
+          tr
+            td(style='padding-right: 10px')
+              if reviewer.ReviewerID
+                =reviewer.ReviewerID
+              else
+                =reviewer.Key
+            td(style='padding-bottom: 10px')
+              | A&nbsp;
+              input(type='radio' name=reviewer.Key value='A')
+              br
+              | B&nbsp;
+              input(type='radio' name=reviewer.Key value='B')
+              br
+              | C&nbsp;
+              input(type='radio' name=reviewer.Key value='C')
+              
+      input(type='submit' value='submit')

@@ -1,0 +1,21 @@
+extends layout.pug
+
+block title
+  title Sign in
+
+block content
+  .container
+    h2 Sign in
+    br
+    table
+      tr
+        td(style='padding-right: 10px')  
+          form(action='/login/1' method='post')
+            p E-mail :&nbsp;
+              input(name='user' type='text' style='width:190px') 
+              | &nbsp; &nbsp;
+              input(type='submit' value='Sign in with email')
+      tr
+        td
+          form(action='https://orcid.org/oauth/authorize?client_id=YOUR_CLIENT_ID&response_type=code&scope=/authenticate&redirect_uri=YOUR_URI:3000' method='post')
+            input(type='submit' value='Sign in with ORCID')

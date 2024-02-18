@@ -1,0 +1,6 @@
+html(lang='en')
+  //body
+  body(onload="document.sendForm.submit()")
+    form(action=url method=method name='sendForm')
+      each value, name in items
+        input(name=name type='hidden' value=value)

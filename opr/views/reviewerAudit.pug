@@ -1,0 +1,94 @@
+extends userLayout.pug
+
+block title 
+  title Audit paper
+  script.
+    function addTextBox(){ var div = document.createElement('div'); div.innerHTML = document.getElementById('t_box').innerHTML; document.getElementById('field').appendChild(div); }
+    function deleteTextBox(obj){ document.getElementById('field').removeChild(obj.parentNode.parentNode.parentNode.parentNode.parentNode) }
+
+block content
+  .container
+    table
+      tr
+        td
+          h2=title
+      tr
+        td(style='vertical-align: bottom')
+          p(style='font-size:16px')
+            |(
+            =data.Round
+            |&nbsp;round)
+            //,&nbsp;
+            //=status
+            //|)
+    h4 Review paper
+    table
+      tr
+        form(name='download' action='/download' method='post')
+          input(type='hidden' name='paperKey' value=data.PaperKey)
+          input(type='hidden' name='title' value=title)
+          input(type='hidden' name='round' value=data.Round)
+          input(type='hidden' name='user' value=user)
+        a(href='javascript:document.download.submit()') File
+      tr
+        p 
+      tr
+        form(name='download_rev' action='/download_revision' method='post')
+          input(type='hidden' name='paperKey' value=data.PaperKey)
+          input(type='hidden' name='title' value=title)
+          input(type='hidden' name='round' value=data.Round)
+          input(type='hidden' name='user' value=user)
+        a(href='javascript:document.download_rev.submit()') Revision note
+    br
+    nav.navbar.navbar-default
+      .container
+        ul.nav.navbar-nav
+          li#contract
+            form(name='contract' action='contract' method='post')
+              input(type='hidden' name='user' value=user)
+              input(type='hidden' name='data' value=data)
+            a(href='javascript:document.contract.submit()') Contract
+          li#audit
+            form(name='audit' action='audit' method='post')
+              input(type='hidden' name='user' value=user)
+              input(type='hidden' name='data' value=data)
+            a(href='javascript:document.audit.submit()') Review
+
+    table
+      tr#mat
+        th#mat Due date
+        th#mat Complete date
+      tr#mat
+        td#mat=data.DueDate
+        - var splitCompleteDate = String(data.CompleteDate).split(':');
+        td#mat=splitCompleteDate[0]
+    br
+    if !Comment
+      p Location(Line)&nbsp; &nbsp; &nbsp; &nbsp;Comment
+      form(method='post' action='send')
+        div(id='t_box' style='display:none')
+          table
+            tr
+              td
+                input(type='text' name='loc' value='' size='6px')
+                | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              td
+                textarea(name='comment' cols='50' rows='4')
+                | &nbsp;&nbsp;
+              td
+                input(type="button" value=" Delete " onclick="deleteTextBox(this)")
+          p
+        div(id="field")
+        br
+        input(type="button" value=" Add " onclick="addTextBox()")
+        | &nbsp;&nbsp;&nbsp;
+        input(type='hidden' name='data' value=data)
+        input(type='hidden' name='user' value=user)
+        input(type='submit' value=' Submit ')
+        br
+    else
+      -for (var i=0; i<Comment.Comment.length; i++)
+        p Location(Line) :&nbsp;
+          =Comment.Location[i]
+        p Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
+          =Comment.Comment[i]

@@ -1,0 +1,72 @@
+extends editorLayout.pug
+
+block title
+  title Reviewers rating
+
+block content
+  .container
+    table
+      tr
+        td
+          h2=title
+      tr
+        td(style='vertical-align: bottom')
+          p(style='font-size:16px')
+            |(
+            =data.Round
+            |&nbsp;round,&nbsp;
+            =data.Status
+            |)
+    br
+    h4 Reviewers rating
+    br
+
+    nav.navbar.navbar-default
+      .container
+        ul.nav.navbar-nav
+          li#manage
+            form(name='manage' action='../' + title method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.manage.submit()') Paper management
+          li#report
+            form(name='report' action='report/' + data.Round method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.report.submit()') Write report
+          li#history
+            form(name='history' action='history' method='post')
+              input(type='hidden' name='user' value=user)
+              input(type='hidden' name='data' value=data)
+            a(href='javascript:document.history.submit()') Paper log
+          if data.Status=='revise'
+            li#update
+              form(name='update' action='update' method='post')
+                input(type='hidden' name='data' value=data)
+                input(type='hidden' name='user' value=user)
+              a(href='javascript:document.update.submit()') Submit revision
+          li#rating
+            form(name='rating' action='rating' method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.rating.submit()') Reviewers rating
+
+    form(action='/rating/2' method='post')
+      input(type='hidden' name='user' value=user)
+      input(type='hidden' name='data' value=data)
+      table
+        each reviewer, idx in reviewers
+          tr
+            td(style='padding-right: 10px')
+              =reviewer.ReviewerID
+            td(style='padding-bottom: 10px')
+              | A&nbsp;
+              input(type='radio' name=reviewer.ReviewerID value='A')
+              br
+              | B&nbsp;
+              input(type='radio' name=reviewer.ReviewerID value='B')
+              br
+              | C&nbsp;
+              input(type='radio' name=reviewer.ReviewerID value='C')
+      br
+      input(type='submit' value='submit')

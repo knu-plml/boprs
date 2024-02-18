@@ -1,0 +1,107 @@
+extends editorLayout.pug
+
+
+block title
+  title Paper management
+
+block content
+  
+  .container
+    table
+      tr
+        td
+          h2=title
+      tr
+        td(style='vertical-align: bottom')
+          p(style='font-size:16px')
+            |(
+            =data.Round
+            |&nbsp;round,&nbsp;
+            =data.Status
+            |)
+    br
+    h4 Paper management
+    br
+    nav.navbar.navbar-default
+      .container
+        ul.nav.navbar-nav
+          li#manage
+            form(name='manage' action="./" + title  method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.manage.submit()') Paper management
+          li#report
+            form(name='report' action="./" + title + '/report/' + data.Round  method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.report.submit()') Write report
+          li#history
+            form(name='history' action="./" + title + '/history' method='post')
+              input(type='hidden' name='data' value=data)
+              input(type='hidden' name='user' value=user)
+            a(href='javascript:document.history.submit()') Paper log
+          if data.Status=='revise'
+            li#update
+              form(name='update' action="./" + title + '/update' method='post')
+                input(type='hidden' name='data' value=data)
+                input(type='hidden' name='user' value=user)
+              a(href='javascript:document.update.submit()') Submit revision
+          if data.Status=='rejected' || data.Status=='accepted'
+            li#rating
+              form(name='rating' action="./" + title + '/rating' method='post')
+                input(type='hidden' name='data' value=data)
+                input(type='hidden' name='user' value=user)
+              a(href='javascript:document.rating.submit()') Reviewers rating
+    
+    if data.Status=='recruit_reviewer'
+      form(action=title + '/stop' method='post')
+        input(type='hidden' name='user' value=user)
+        input(type='hidden' name='data' value=data)
+        input(type='submit' value='Stop recruiting')
+      br  
+    if data.Status=='reviewer_invited' || data.Status=='revise'
+      form(action=title + '/contract' method='post')
+        |Until &nbsp;
+        input(type='text' name='year' style='width:40px')
+        |&nbsp;year &nbsp;
+        input(type='text' name='month' style='width:30px')
+        |&nbsp;month &nbsp;
+        input(type='text' name='day' style='width:30px')
+        |&nbsp;day &nbsp;
+        input(type='hidden' name='user' value=user)
+        input(type='hidden' name='data' value=data)
+        input(type='submit' value='Create contract' name='contract')
+      br
+    if data.Status=='reviewer_invited'
+      form(action=title + '/round' method='post')
+        input(type='hidden' name='user' value=user)
+        input(type='hidden' name='data' value=data)
+        input(type='submit' value='Start round' name='round')
+    if data.Status=='under_review'
+      form(action=title + '/end' method='post')
+        input(type='hidden' name='user' value=user)
+        input(type='hidden' name='data' value=data)
+        input(type='submit' value='End round' name='end')
+    br
+    br
+    table.table.table-striped
+      thead
+        tr
+          - var items = ["Reviewer", "Status", "E-mail", "Decision"]
+          each item in items
+            th= item
+      tbody
+        each candidate, idx in cand
+          tr
+            td= candidate.ReviewerID
+            td= candidate.Status
+            td= candidate.Email
+            td
+              if candidate.Status == 'candidate'
+                form(name='delete' + idx action=title + '/delete' method='post')
+                  input(type='hidden' name='user' value=user)
+                  input(type='hidden' name='data' value=data)
+                  input(type='hidden' name='reviewerKey' value=candidate.Key)
+                  a(href='javascript:document.delete' + idx + '.submit()') Reject
+              else
+                p=''

@@ -1,0 +1,108 @@
+---
+name: test-network
+version: 1.0.0
+client:
+    organization: JISTAP
+    connection:
+        timeout:
+            peer:
+                endorser: 120001
+channels:
+    boprs:
+        orderers:
+        - orderer0
+        peers:
+            peer0:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            peer1:
+                endorsingPeer: false
+                chaincodeQuery: false
+                ledgerQuery: false
+                eventSource: false
+            peer2:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            peer3:
+                endorsingPeer: false
+                chaincodeQuery: false
+                ledgerQuery: false
+                eventSource: false
+organizations:
+    JISTAP:
+        mspid: JISTAP
+        peers:
+        - peer0
+        - peer1
+        certificateAuthorities:
+        - ca
+        adminPrivateKey:
+          path: '/root/fabric/script/adminJistap-server.key'
+        signedCert:
+          path: '/root/fabric/script/adminJistap-cert.pem'
+    JISTAP2:
+        mspid: JISTAP2
+        peers:
+        - peer2
+        - peer3
+        certificateAuthorities:
+        - ca
+orderers:
+    orderer0:
+        url: grpcs://localhost:10510
+        grpcOptions:
+          ssl-target-name-override: orderer0
+          request-timeout: 120001
+        tlsCACerts: 
+          path: /root/fabric/script/orderer0-tlsca.crt
+
+peers:
+    peer0:
+        url: grpcs://localhost:10501
+        eventUrl: grpcs://localhost:11501
+        grpcOptions:
+          ssl-target-name-override: peer0
+          request-timeout: 120001
+        tlsCACerts: 
+          path: /root/fabric/script/tlsca.crt
+
+    peer1:
+        url: grpcs://localhost:10502
+        grpcOptions:
+          ssl-target-name-override: peer1
+          request-timeout: 120001
+        tlsCACerts: 
+          path: /root/fabric/script/tlsca.crt
+
+    peer2:
+        url: grpcs://localhost:10503
+        eventUrl: grpcs://localhost:11503
+        grpcOptions:
+          ssl-target-name-override: peer2
+          request-timeout: 120001
+        tlsCACerts: 
+          path: /root/fabric/script/tlsca.crt
+
+    peer3:
+        url: grpcs://localhost:10504
+        grpcOptions:
+          ssl-target-name-override: peer3
+          request-timeout: 120001
+        tlsCACerts: 
+          path: /root/fabric/script/tlsca.crt
+
+certificateAuthorities:
+    ca:
+        url: https://localhost:10054
+        httpOptions:
+          verify: false
+        registrar:
+          - enrollId: testadmin
+            enrollSecret: testadminpw
+        caName: fabric-ca
+        tlsCACerts: 
+            path: /root/fabric/script/tls-cert.pem
