@@ -38,3 +38,7 @@ node app.js
 ```
 
 The open peer review service is hosted at localhost:3000
+
+# Demo video
+https://github.com/knu-plml/boprs/assets/19504057/cbcbfb02-64c1-444a-95ac-670960cb673f
+
