@@ -16,7 +16,7 @@ This system is configured on a blockchain network using Hyperledger Fabric. For 
 clone https://github.com/knu-plml/boprs.git /root/fabric
 
 # Download and move the Docker image.
-# The image can be downloaded from https://drive.google.com/file/d/1j2Lxy8hGwuQtmAmnh6cojll7hR3O2Tiv/view?usp=sharing.
+# The image can be downloaded from https://pl.kangwon.ac.kr/files/default-fabric-image.tar.
 mv default-fabric-image.tar /root/fabric/script
 
 # Configure a blockchain network and install chaincodes using our proposed template.
